@@ -10,63 +10,45 @@ namespace Spreadsheet
 {
     class ProgramLoop
     {
+        private readonly SpreadsheetService _spreadsheetService;
+
+        public ProgramLoop()
+        {
+            _spreadsheetService = new SpreadsheetService();
+        }
+
+        public ProgramLoop(SpreadsheetService spreadsheetService)
+        {
+            _spreadsheetService = spreadsheetService;
+        }
+
         public void Run()
         {
+            var unevaluatedSpreadsheet = new Dictionary<string, string>();
+            var evaluatedSpreadsheet = new Dictionary<string, double>();
+
             var spreadsheetLine = string.Empty;
+            var addressChar = 'A';
+
             while (!spreadsheetLine.EndsWith(";"))
             {
                 spreadsheetLine = Console.ReadLine();
                 var lineData = spreadsheetLine.Split('|');
+
                 if (spreadsheetLine.EndsWith(";"))
                 {
                     lineData[lineData.Length - 1] = lineData[lineData.Length - 1].Remove(lineData[lineData.Length - 1].Length - 1);
                 }
-                var spreadsheetLineData = lineData.Select(l => Evaluate(l)).ToList();
-            }
-        }
 
-        private double Evaluate(string expression)
-        {
-            //Jedna liczba
-            if (double.TryParse(expression, out _))
-            {
-                return double.Parse(expression);
+                for (var i = 1; i <= lineData.Length; i++)
+                {
+                    unevaluatedSpreadsheet.Add(addressChar + i.ToString(), lineData[i - 1]);
+                }
+
+                addressChar++;
             }
 
-            //Adres do komórki w arkuszsu
-            var pattern = @"^[A-Z]{0,1}\d+$";
-            var match = Regex.Match(expression, pattern);
-
-
-            //Dwie liczby lub dwa adresy i operator
-            pattern = @"^(\d+)\s*([-+*\/])\s*(\d+)$";
-
-            match = Regex.Match(expression, pattern);
-
-            var firstValue = match.Groups[1].Value;
-            var secondValue = match.Groups[3].Value;
-
-            switch (match.Groups[2].Value)
-            {
-                case "+":
-                    return Evaluate(firstValue) + Evaluate(secondValue);
-                case "-":
-                    return Evaluate(firstValue) - Evaluate(secondValue);
-                case "*":
-                    return Evaluate(firstValue) * Evaluate(secondValue);
-                case "/":
-                    return Evaluate(firstValue) / Evaluate(secondValue);
-            }
-
-            //Adres typu jedna litera kolumny, jedna cyfra rzędu
-
-
-            return 0;
-        }
-
-        private double Find(string address, Dictionary<string, string> spreadsheet)
-        {
-            return 0;
+            evaluatedSpreadsheet = _spreadsheetService.EvaluateSpreadsheet(unevaluatedSpreadsheet);
         }
     }
 }
