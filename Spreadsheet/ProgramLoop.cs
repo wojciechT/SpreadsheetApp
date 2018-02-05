@@ -24,7 +24,7 @@ namespace Spreadsheet
 
         public void Run()
         {
-            var unevaluatedSpreadsheet = new Dictionary<string, string>();
+            var spreadsheet = new Dictionary<string, string>();
             var evaluatedSpreadsheet = new Dictionary<string, double>();
 
             var spreadsheetLine = string.Empty;
@@ -42,13 +42,19 @@ namespace Spreadsheet
 
                 for (var i = 1; i <= lineData.Length; i++)
                 {
-                    unevaluatedSpreadsheet.Add(addressChar + i.ToString(), lineData[i - 1]);
+                    spreadsheet.Add(addressChar + i.ToString(), lineData[i - 1]);
                 }
 
                 addressChar++;
             }
 
-            evaluatedSpreadsheet = _spreadsheetService.EvaluateSpreadsheet(unevaluatedSpreadsheet);
+            Console.Write("Input expression to evaluate: ");
+            var expression = Console.ReadLine();
+
+            Console.Write($"{_spreadsheetService.Evaluate(expression, spreadsheet)}");
+
+            //_spreadsheetService.Evaluate(expression, spreadsheet);
+
         }
     }
 }

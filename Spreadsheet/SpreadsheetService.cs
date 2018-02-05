@@ -39,7 +39,7 @@ namespace Spreadsheet
             }
 
             //Dwie liczby lub dwa adresy i operator
-            pattern = @"^(\d+)\s*([-+*\/])\s*(\d+)$";
+            pattern = @"^([A-Z]{1}\d+)\s*([-+*\/])\s*([A-Z]{1}\d+)$";
 
             match = Regex.Match(expression, pattern);
 
@@ -58,11 +58,6 @@ namespace Spreadsheet
                     return Evaluate(firstValue, spreadsheet) / Evaluate(secondValue, spreadsheet);
             }
 
-            return 0;
-        }
-
-        public double EvaluateExpression(string expression, Dictionary<string, double> evaluatedSpreadsheet)
-        {
             return 0;
         }
 
