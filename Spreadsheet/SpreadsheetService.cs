@@ -11,7 +11,14 @@ namespace Spreadsheet
     {
         public Dictionary<string, double> EvaluateSpreadsheet(Dictionary<string, string> unevaluatedSpreadsheet)
         {
+            var evaluatedSpreadsheet = new Dictionary<string, double>();
 
+            foreach (var cell in unevaluatedSpreadsheet)
+            {
+                evaluatedSpreadsheet.Add(cell.Key, Evaluate(cell.Value, unevaluatedSpreadsheet));   
+            }
+
+            return evaluatedSpreadsheet;
         }
 
         public double Evaluate(string expression, Dictionary<string, string> spreadsheet)
@@ -23,7 +30,7 @@ namespace Spreadsheet
             }
 
             //Adres do komórki w arkuszsu
-            var pattern = @"^[A-Z]{0,1}\d+$";
+            var pattern = @"^[A-Z]{1}\d+$";
             var match = Regex.Match(expression, pattern);
 
             if (match.Success)
@@ -51,6 +58,11 @@ namespace Spreadsheet
                     return Evaluate(firstValue, spreadsheet) / Evaluate(secondValue, spreadsheet);
             }
 
+            return 0;
+        }
+
+        public double EvaluateExpression(string expression, Dictionary<string, double> evaluatedSpreadsheet)
+        {
             return 0;
         }
 
