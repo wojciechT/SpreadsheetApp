@@ -10,26 +10,29 @@ namespace Spreadsheet
 {
     class ProgramLoop
     {
-        private readonly SpreadsheetService _spreadsheetService;
+        private readonly Resolver _resolver;
+        private readonly Evaluator _evaluator;
 
         public ProgramLoop()
         {
-            _spreadsheetService = new SpreadsheetService();
+            _resolver = new Resolver();
+            _evaluator = new Evaluator();
         }
 
-        public ProgramLoop(SpreadsheetService spreadsheetService)
+        public ProgramLoop(Resolver resolver, Evaluator evaluator)
         {
-            _spreadsheetService = spreadsheetService;
+            _resolver = resolver;
+            _evaluator = evaluator;
         }
 
         public void Run()
         {
             var spreadsheet = new Dictionary<string, string>();
-            var evaluatedSpreadsheet = new Dictionary<string, double>();
 
             var spreadsheetLine = string.Empty;
             var addressChar = 'A';
 
+            var index = 1;
             while (!spreadsheetLine.EndsWith(";"))
             {
                 spreadsheetLine = Console.ReadLine();
@@ -40,21 +43,27 @@ namespace Spreadsheet
                     lineData[lineData.Length - 1] = lineData[lineData.Length - 1].Remove(lineData[lineData.Length - 1].Length - 1);
                 }
 
-                for (var i = 1; i <= lineData.Length; i++)
+                foreach (var item in lineData)
                 {
-                    spreadsheet.Add(addressChar + i.ToString(), lineData[i - 1]);
+                    spreadsheet.Add(addressChar + index.ToString(), item);
+                    addressChar++;
                 }
+                index++;
+                addressChar = 'A';
+            }
 
-                addressChar++;
+            var evaluatedSpreadsheet = new Dictionary<string, string>();
+
+            foreach (var cell in spreadsheet)
+            {
+                evaluatedSpreadsheet.Add(cell.Key, _resolver.ResolveInSpreadsheet(cell.Value, cell.Key, new List<string>(), spreadsheet));
             }
 
             Console.Write("Input expression to evaluate: ");
             var expression = Console.ReadLine();
+            var result = _evaluator.ParseAndEvaluate(_resolver.ResolveInExpression(expression, evaluatedSpreadsheet));
 
-            Console.Write($"{_spreadsheetService.Evaluate(expression, spreadsheet)}");
-
-            //_spreadsheetService.Evaluate(expression, spreadsheet);
-
+            Console.Write($"{result}");
         }
     }
 }

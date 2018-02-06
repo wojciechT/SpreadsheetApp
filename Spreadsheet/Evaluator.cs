@@ -10,6 +10,10 @@ namespace Spreadsheet
 {
     public class Evaluator
     {
+        public double ParseAndEvaluate(string expression)
+        {
+            return Evaluate(Parse(expression));
+        }
         public string Parse(string expression)
         {
             var precedence = new Dictionary<string, int>
