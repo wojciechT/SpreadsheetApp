@@ -48,7 +48,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SpreadsheetServiceTest.cs" />
+    <Compile Include="EvaluatorTests.cs" />
+    <Compile Include="SpreadsheetServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

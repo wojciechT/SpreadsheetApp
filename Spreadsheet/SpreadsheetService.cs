@@ -9,6 +9,17 @@ namespace Spreadsheet
 {
     public class SpreadsheetService
     {
+        private readonly Evaluator _evaluator;
+
+        public SpreadsheetService()
+        {
+            _evaluator = new Evaluator();
+        }
+        public SpreadsheetService(Evaluator evaluator)
+        {
+            _evaluator = evaluator;
+        }
+
         public Dictionary<string, double> EvaluateSpreadsheet(Dictionary<string, string> unevaluatedSpreadsheet)
         {
             var evaluatedSpreadsheet = new Dictionary<string, double>();
@@ -39,7 +50,7 @@ namespace Spreadsheet
             }
 
             //Dwie liczby lub dwa adresy i operator
-            pattern = @"^([A-Z]{1}\d+)\s*([-+*\/])\s*([A-Z]{1}\d+)$";
+            pattern = @"^([A-Z]{0,1}\d+)\s*([-+*\/])\s*([A-Z]{0,1}\d+)$";
 
             match = Regex.Match(expression, pattern);
 
