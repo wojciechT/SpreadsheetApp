@@ -116,7 +116,7 @@ namespace SpreadsheetTests
             };
 
             //Assert
-            Assert.ThrowsException<Exception>(() =>
+            Assert.ThrowsException<CircularReferenceException>(() =>
                 resolver.ResolveInSpreadsheet(spreadsheet["A3"], "A3", new List<string>(), spreadsheet));
         }
     } 

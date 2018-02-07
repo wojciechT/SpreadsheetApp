@@ -27,6 +27,19 @@ namespace Spreadsheet
 
         public void Run()
         {
+            var spreadsheet = ReadNewSpreadsheetData();
+
+            var resolvedSpreadsheet = ResolveSpreadsheet(spreadsheet);
+
+            Console.Write("Input expression to evaluate: ");
+            var expression = Console.ReadLine();
+            var result = _evaluator.ParseAndEvaluate(_resolver.ResolveInExpression(expression, resolvedSpreadsheet));
+
+            Console.Write($"{result}");
+        }
+
+        private Dictionary<string, string> ReadNewSpreadsheetData()
+        {
             var spreadsheet = new Dictionary<string, string>();
 
             var spreadsheetLine = string.Empty;
@@ -52,18 +65,19 @@ namespace Spreadsheet
                 addressChar = 'A';
             }
 
-            var evaluatedSpreadsheet = new Dictionary<string, string>();
+            return spreadsheet;
+        }
+
+        private Dictionary<string, string> ResolveSpreadsheet(Dictionary<string, string> spreadsheet)
+        {
+            var resolvedSpreadsheet = new Dictionary<string, string>();
 
             foreach (var cell in spreadsheet)
             {
-                evaluatedSpreadsheet.Add(cell.Key, _resolver.ResolveInSpreadsheet(cell.Value, cell.Key, new List<string>(), spreadsheet));
+                resolvedSpreadsheet.Add(cell.Key, _resolver.ResolveInSpreadsheet(cell.Value, cell.Key, new List<string>(), spreadsheet));
             }
 
-            Console.Write("Input expression to evaluate: ");
-            var expression = Console.ReadLine();
-            var result = _evaluator.ParseAndEvaluate(_resolver.ResolveInExpression(expression, evaluatedSpreadsheet));
-
-            Console.Write($"{result}");
+            return resolvedSpreadsheet;
         }
     }
 }
